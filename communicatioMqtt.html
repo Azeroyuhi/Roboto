@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MQTT Example</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js"></script>
+</head>
+<body>
+	<h1>MQTT Example</h1>
+	<script>
+		var host = "192.168.1.87";
+		var port = 1883;
+		var clientId = "web_" + parseInt(Math.random() * 1000);
+		var username = "yonkeu";
+		var password = "1234";
+
+		// Create a client instance
+		var client = new Paho.MQTT.Client(host, port, clientId);
+
+		// Set the username and password
+		client.username = username;
+		client.password = password;
+
+		// Connect the client
+		client.connect({
+			onSuccess: onConnect,
+			onFailure: onFailure
+		});
+
+		// Called when the connection is successful
+		function onConnect() {
+			console.log("Connected to MQTT broker");
+			// Subscribe to a topic
+			client.subscribe("testTopic");
+
+			// Publish a message
+			var message = new Paho.MQTT.Message("Hello from the browser");
+			message.destinationName = "testTopic";
+			client.send(message);
+		}
+
+		// Called when the connection fails
+		function onFailure(err) {
+			console.error("Failed to connect to MQTT broker", err);
+		}
+
+		// Called when a message is received
+		function onMessageArrived(message) {
+			console.log("Received message:", message.payloadString);
+		}
+
+		// Set the callback for received messages
+		client.onMessageArrived = onMessageArrived;
+	</script>
+</body>
+</html>
